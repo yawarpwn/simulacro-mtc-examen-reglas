@@ -1,9 +1,15 @@
 lockfileVersion: '6.0'
 
 dependencies:
+  canvas-confetti:
+    specifier: 1.6.0
+    version: 1.6.0
   preact:
     specifier: ^10.13.1
     version: 10.13.2
+  simple-notify:
+    specifier: ^0.5.5
+    version: 0.5.5
 
 devDependencies:
   '@preact/preset-vite':
@@ -839,6 +845,10 @@ packages:
   /caniuse-lite@1.0.30001481:
     resolution: {integrity: sha512-KCqHwRnaa1InZBtqXzP98LPg0ajCVujMKjqKDhZEthIpAsJl/YEIa3YvXjGXPVqzZVguccuu7ga9KOE1J9rKPQ==}
     dev: true
+
+  /canvas-confetti@1.6.0:
+    resolution: {integrity: sha512-ej+w/m8Jzpv9Z7W7uJZer14Ke8P2ogsjg4ZMGIuq4iqUOqY2Jq8BNW42iGmNfRwREaaEfFIczLuZZiEVSYNHAA==}
+    dev: false
 
   /chalk@2.4.2:
     resolution: {integrity: sha512-Mti+f9lpJNcwF4tWV8/OrTTtF1gZi+f8FqlyAdouralcFWFQWF2+NgCHShjkCb+IFBLq9buZwE1xckQU4peSuQ==}
@@ -2083,6 +2093,10 @@ packages:
       get-intrinsic: 1.2.0
       object-inspect: 1.12.3
     dev: true
+
+  /simple-notify@0.5.5:
+    resolution: {integrity: sha512-zsFPqTqoSOcAGdvT76NdxkceC0kKiRSLJLVD6fn2o2j17bwUMw3cl9f07aLmojAHeNzQRUeXNxYK4OCumIcC4g==}
+    dev: false
 
   /source-map-js@1.0.2:
     resolution: {integrity: sha512-R0XvVJ9WusLiqTCEiGCmICCMplcCkIwwR11mOSD9CR5u+IXYdiseeEuXCVAjS54zqwkLcPNnmU4OeJ6tUrWhDw==}
