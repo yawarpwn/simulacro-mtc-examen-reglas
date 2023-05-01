@@ -12,6 +12,7 @@ export function getQuestions () {
         d: alternativa_d
       },
       index,
+      hasImage: image === 1, 
       image
     }
   })
