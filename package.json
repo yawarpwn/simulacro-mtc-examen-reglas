@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "canvas-confetti": "1.6.0",
     "preact": "^10.13.1"
   },
   "devDependencies": {

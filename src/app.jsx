@@ -1,92 +1,107 @@
-  import { useEffect, useState } from 'preact/hooks'
-import './app.css'
-import { getQuestions } from './services/getQuestions'
+import { useEffect, useState } from "preact/hooks"
+import confetti from "canvas-confetti"
+import "./app.css"
+import { getQuestions } from "./services/getQuestions"
 
-  function Alternative ({ index, alternativa, checked, handleInput }) {
+function Option({ alternativa, onInputChange, index , userResponse }) {
+  const checked = userResponse === alternativa
+  return (
+    <div className="flex gap-2 items-center rounded-lg bg-white/5">
+      <label className="h-24 flex items-center ml-2 " htmlFor={`alternativa-${index}`}>
+        <div className="flex items-center gap-2">
+          <input
+            onChange={onInputChange}
+            value={alternativa}
+            id={`alternativa-${index}`}
+            className="inline-block"
+            type="radio"
+            checked={checked}
+          />
+          <span className="text-sm">{alternativa}</span>
+        </div>
+      </label>
+    </div>
+  )
+}
 
-        return (
+function ListOfOptions({ question, checkAnswer, updateQuestion }) {
+  const [userResponse, setUserResponse] = useState("")
 
-            <div key={index} className={`flex items-center gap-2 `}>
-              <input
-                type='radio' id={`respuesta-${index}`} value={alternativa} onChange={handleInput}
-                checked={checked}
-              />
-              <label htmlFor={`respuesta-${index}`}>{alternativa}</label>
-            </div>
-    )
-  }
-
-function Question ({  currentQuestion, nextQuestion }) {
-  const { pregunta,  alternativas, respuesta, image, index } = currentQuestion
-  const isImage = image === 1 
-
-  const [userResponse, setUserResponse] = useState('')
-
-
-
-      const corretAnswer = alternativas[respuesta] === userResponse
-  const handleSubmit = (ev) => {
-      ev.preventDefault()
-
-      if(corretAnswer) {
-        nextQuestion()
-      } else {
-        alert(`Respuesta era: ${alternativas[respuesta].slice(0, 1)}`)
-        nextQuestion()
-      }
-  }
-
-  const handleInput = (event) => {
+  const onInputChange = (event) => {
     setUserResponse(event.target.value)
   }
 
+  const handleSubmit = (event) => {
+    event.preventDefault()
+
+    const isCorrect = checkAnswer(userResponse)
+    if(isCorrect) {
+      confetti()
+      updateQuestion()
+    } else {
+      alert('equivocado')
+    }
+
+  }
+
+  const { alternativas } = question
 
   return (
     <>
-      <h2 className='font-bold'>{pregunta}</h2>
-      { isImage && <img className='min-h-[200px]' src={`https://sierdgtt.mtc.gob.pe/Content/img-data/img${index}.jpg`} />}
-      <form onSubmit={handleSubmit} className='card-body'>
-        {Object.values(alternativas).map((alternativa, index) => {
-          return (
-          <Alternative    key={index} alternativa={alternativa} checked={userResponse === alternativa} handleInput={handleInput} />
-          )
-        })}
-        <div className='card-footer'>
-          <button className='btn btn-primary'>Siguiente</button>
-        </div>
+      <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
+        {Object.values(alternativas).map((alternativa, i) => (
+          <Option
+            alternativa={alternativa}
+            onInputChange={onInputChange}
+            key={i}
+            index={i}
+            userResponse={userResponse}
+          />
+        ))}
+        <button>Siguiente</button>
       </form>
     </>
   )
 }
 
-export default function App () {
+export default function App() {
   const [currentQuestion, setCurrentQuestion] = useState(null)
 
-    const pushQuestion = () => {
+  const updateQuestion = () => {
     const questions = getQuestions()
     const randomIndex = Math.floor(Math.random() * 200)
 
     setCurrentQuestion(questions[randomIndex])
-    }
+  }
 
-    const nextQuestion = () => {
-      pushQuestion()
-    }
-
+  const checkAnswer = (userResponse) => {
+    return  userResponse === currentQuestion.alternativas[currentQuestion.respuesta]
+  }
 
   useEffect(() => {
-      pushQuestion()
+    updateQuestion()
   }, [])
 
+  if (!currentQuestion) return "Loading"
 
   return (
-    <div className='max-w-md w-full mx-auto px-4'>
-      <div className='card'>
-        <h1 className='text-2xl mb-4 font-bold'>Neyda ❤️preguntas</h1>
-        {currentQuestion
-          ? <Question currentQuestion={currentQuestion} nextQuestion={nextQuestion}  />
-          : 'loadingg'}
-      </div>
+    <div className="max-w-xl mx-auto w-full ">
+      <header>
+        <h3 className="text-xl font-bold">Neyda ❤️preguntas</h3>
+      </header>
+      <article className="flex flex-col justify-center">
+        <header>
+          <h2>{currentQuestion.pregunta}</h2>
+          {currentQuestion.image === 1 && (
+            <div className="mt-2 flex justify-center">
+              <img
+                src={`https://sierdgtt.mtc.gob.pe/Content/img-data/img${currentQuestion.index}.jpg`}
+              />
+            </div>
+          )}
+        </header>
+        <ListOfOptions question={currentQuestion} checkAnswer={checkAnswer} updateQuestion={updateQuestion} />
+      </article>
     </div>
   )
 }
