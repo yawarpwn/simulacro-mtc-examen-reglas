@@ -1,16 +1,48 @@
 import { useEffect, useState } from "preact/hooks"
 import confetti from "canvas-confetti"
-import Notify from "simple-notify"
 import "simple-notify/dist/simple-notify.min.css"
 import "./app.css"
 import { getQuestions } from "./services/getQuestions"
+
+function Result({ resetGame, wrongQuestions }) {
+  console.log({ wrongQuestions })
+  return (
+    <div className="flex flex-col gap-4">
+      <h2 className="text-red-500 font-extrabold uppercase text-xl">
+        Fallaste !!!
+      </h2>
+      <div className="flex flex-col gap-4">
+        {wrongQuestions.map(
+          ({ correctAnswer, question, incorrectAnswer, hasImage, index }, i) => {
+            return (
+              <div className="text-left bg-white/5 p-4 rounded-lg" key={i}>
+
+                <p className="mb-4">{question}</p>
+                {hasImage && (
+                  <div className="flex justify-center mb-4">
+                  <img
+                    src={`https://sierdgtt.mtc.gob.pe/Content/img-data/img${index}.jpg`}
+                  />
+                  </div>
+                )}
+                <p className="text-green-500">{correctAnswer}</p>
+                <p className="text-red-700">{incorrectAnswer}</p>
+              </div>
+            )
+          }
+        )}
+      </div>
+      <button onClick={resetGame}>Intentar otra vez</button>
+    </div>
+  )
+}
 
 function Option({ alternativa, onInputChange, index, userResponse }) {
   const checked = userResponse === alternativa
   return (
     <div className="flex gap-2 items-center rounded-lg bg-white/5">
       <label
-        className="h-24 flex items-center ml-2 "
+        className=" flex items-center ml-2 p-4"
         htmlFor={`alternativa-${index}`}
       >
         <div className="flex items-center gap-2">
@@ -29,29 +61,8 @@ function Option({ alternativa, onInputChange, index, userResponse }) {
   )
 }
 
-function ListOfOptions({ question, checkAnswer, updateQuestion }) {
+function ListOfOptions({ question, checkAnswer, updateQuestion, updateError }) {
   const [userResponse, setUserResponse] = useState("")
-  const [error, setError] = useState(null)
-
-  function pushNotify() {
-    new Notify({
-      status: "error",
-      title: "Te Equivocastes",
-      text: "Prueba otra respuesta",
-      effect: "slide",
-      speed: 100,
-      customClass: null,
-      customIcon: null,
-      showIcon: true,
-      showCloseButton: true,
-      autoclose: true,
-      autotimeout: 3000,
-      gap: 20,
-      distance: 20,
-      type: 1,
-      position: "center",
-    })
-  }
 
   const onInputChange = (event) => {
     setUserResponse(event.target.value)
@@ -63,11 +74,10 @@ function ListOfOptions({ question, checkAnswer, updateQuestion }) {
     const isCorrect = checkAnswer(userResponse)
     if (isCorrect) {
       confetti()
-      setError(null)
       updateQuestion()
     } else {
-      pushNotify()
-      setError(true)
+      updateError(userResponse)
+      updateQuestion()
     }
   }
 
@@ -93,16 +103,43 @@ function ListOfOptions({ question, checkAnswer, updateQuestion }) {
 
 export default function App() {
   const [currentQuestion, setCurrentQuestion] = useState(null)
-  const [count, setCount] = useState(0)
+  const [questionCount, setQuestionCount] = useState(0)
+  const [shownQuestions, setShownQuestion] = useState([])
+  const [wrongQuestions, setWrongQuestions] = useState([])
+  const [countError, setCountError] = useState(0)
 
-  const MAX_QUESTION = 10 
+  const MAX_QUESTION = 10
+  const MAX_TRIES = 5
 
   const updateQuestion = () => {
     const questions = getQuestions()
     const randomIndex = Math.floor(Math.random() * 200)
+    const newQuestion = questions[randomIndex]
 
-    setCurrentQuestion(questions[randomIndex])
-    setCount(count + 1)
+    if (shownQuestions.includes(newQuestion)) {
+      updateQuestion()
+    } else {
+      setShownQuestion([...shownQuestions, newQuestion])
+      setCurrentQuestion(newQuestion)
+      setQuestionCount(questionCount + 1)
+    }
+  }
+
+  const updateError = (userResponse) => {
+    setCountError(countError + 1)
+
+    const correctAnswer =
+      currentQuestion.alternativas[currentQuestion.respuesta]
+    setWrongQuestions([
+      ...wrongQuestions,
+      {
+        question: currentQuestion.pregunta,
+        correctAnswer,
+        incorrectAnswer: userResponse,
+        hasImage: currentQuestion.image === 1,
+        index: currentQuestion.index
+      },
+    ])
   }
 
   const checkAnswer = (userResponse) => {
@@ -111,24 +148,44 @@ export default function App() {
     )
   }
 
+  const resetGame = () => {
+    updateQuestion()
+    setCountError(0)
+    setQuestionCount(1)
+  }
+
   useEffect(() => {
     updateQuestion()
   }, [])
 
   if (!currentQuestion) return "Loading"
 
-  if(count > MAX_QUESTION) {
-    return "Se termino"
+  if (countError >= MAX_TRIES) {
+    return <Result wrongQuestions={wrongQuestions} resetGame={resetGame} />
+  }
+
+  if (questionCount >= MAX_QUESTION) {
+    return (
+      <div>
+        <h2>MUy Bien Lo has Logrado : )</h2>
+        <button onClick={resetGame}>Practicar otra vez</button>
+      </div>
+    )
   }
 
   return (
-    <div className="max-w-xl mx-auto w-full ">
-      <header>
-        <h3 className="text-xl font-bold">Pregunta {count + '/' + MAX_QUESTION}</h3>
+    <div className="max-w-xl mx-auto w-full flex flex-col gap-4 ">
+      <header className="border-b border-b-indigo-700 p-4 grid grid-cols-2 gap-x-4">
+        <div className="bg-green-500 text-white p-2 rounded-md uppercase">
+          Pregunta: {questionCount + "/" + MAX_QUESTION}
+        </div>
+        <div className="bg-red-500 text-white p-2 rounded-md">
+          Fallos: {countError}
+        </div>
       </header>
-      <article className="flex flex-col justify-center">
+      <article className="flex flex-col justify-center gap-4 w-full">
         <header>
-          <h2>{currentQuestion.pregunta}</h2>
+          <h2 className="text-indigo-400">{currentQuestion.pregunta}</h2>
           {currentQuestion.image === 1 && (
             <div className="mt-2 flex justify-center">
               <img
@@ -141,6 +198,7 @@ export default function App() {
           question={currentQuestion}
           checkAnswer={checkAnswer}
           updateQuestion={updateQuestion}
+          updateError={updateError}
         />
       </article>
     </div>
