@@ -4,8 +4,8 @@ export default function Results() {
   const { resetGame, wrongQuestions } = useQuestion()
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="text-red-500 font-extrabold uppercase text-xl">
-        Fallaste !!!
+      <h2 className="text-red-600 font-extrabold uppercase text-xl">
+        Revisa tus errores
       </h2>
       <div className="flex flex-col gap-4">
         {wrongQuestions.map(
@@ -14,8 +14,8 @@ export default function Results() {
             i
           ) => {
             return (
-              <div className="text-left bg-white/5 p-4 rounded-lg" key={i}>
-                <p className="mb-4">{question}</p>
+              <div className="text-left bg-black/20 p-4 rounded-lg backdrop-blur-md saturate-150 text-sm" key={i}>
+                <p className="mb-4 text-yellow-400 text-center">{question}</p>
                 {hasImage && (
                   <div className="flex justify-center mb-4">
                     <img
@@ -23,14 +23,19 @@ export default function Results() {
                     />
                   </div>
                 )}
-                <p className="text-green-500">{correctAnswer}</p>
-                <p className="text-red-700">{incorrectAnswer}</p>
+                <div className="mb-2 flex items-center gap-2">
+                  <span className="bg-green-500 w-1 h-10 block"/>
+                  <span className="ml-2">{correctAnswer}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="bg-red-500 w-1 h-10 block"></span>
+                  <span className="ml-2">{incorrectAnswer}</span>
+                </div>
               </div>
             )
           }
         )}
       </div>
-      <button onClick={resetGame}>Intentar otra vez</button>
     </div>
   )
 }

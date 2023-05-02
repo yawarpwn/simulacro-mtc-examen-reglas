@@ -7,10 +7,17 @@ const QuestionContext = createContext()
 
 export function QuestionProvider({ children }) {
   const [currentQuestion, setCurrentQuestion] = useState(null)
-  const [shownQuestions, setShownQuestion] = useState([])
+  const [shownQuestions, setShownQuestion] = useState((() => {
+    if(localStorage.getItem('__SHOWN_QUESTIONS__')) {
+      return JSON.parse(localStorage.getItem('__SHOWN_QUESTIONS__'))
+    } 
+
+    return []
+  })())
   const [wrongQuestions, setWrongQuestions] = useState([])
   const [questionCount, setQuestionCount] = useState(0)
   const [lives, setLives] = useState(MAX_TRIES)
+
 
   const updateQuestion = () => {
     const questions = getQuestions()
@@ -21,6 +28,7 @@ export function QuestionProvider({ children }) {
       updateQuestion()
     } else {
       setShownQuestion([...shownQuestions, newQuestion])
+      localStorage.setItem('__SHOWN_QUESTIONS__', JSON.stringify(shownQuestions))
       setCurrentQuestion(newQuestion)
       setQuestionCount(questionCount + 1)
     }
@@ -36,11 +44,6 @@ export function QuestionProvider({ children }) {
     }
     localStorage.setItem("GAME", JSON.stringify(game))
   }, [lives, currentQuestion, wrongQuestions, shownQuestions])
-
-  useEffect(() => {
-    const data = JSON.parse(localStorage.getItem('GAME'))
-    console.log(data)
-  }, [])
 
   const updateLives = (userResponse) => {
     setLives((prevLives) => prevLives - 1)
@@ -86,6 +89,7 @@ export function QuestionProvider({ children }) {
         shownQuestions,
         setShownQuestion,
         resetGame,
+        setLives,
         updateQuestion,
         checkAnswer,
         updateLives,

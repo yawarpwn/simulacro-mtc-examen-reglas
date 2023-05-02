@@ -11,7 +11,8 @@
   "dependencies": {
     "canvas-confetti": "1.6.0",
     "preact": "^10.13.1",
-    "simple-notify": "^0.5.5"
+    "simple-notify": "^0.5.5",
+    "zustand": "4.3.7"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.5.0",

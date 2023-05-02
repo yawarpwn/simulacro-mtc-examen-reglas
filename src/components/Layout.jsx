@@ -1,12 +1,17 @@
 import { MAX_QUESTION, MAX_TRIES } from "../constants"
 import { useQuestion } from "../hooks/useQuestion"
 import { Heart } from "../icons/Heart"
+import Timer from "./Timer"
 
 export default function Layout({ children }) {
-  const { questionCount, lives, resetGame } = useQuestion()
+  const { questionCount, lives, resetGame, setLives  } = useQuestion()
   const hearts = Array.from({ length: MAX_TRIES }, (_, index) => (
     <Heart key={index} active={index < lives} />
   ))
+
+  const handleTimeUp = () => {
+    setLives(0)
+  }
 
   return (
     <>
@@ -16,10 +21,13 @@ export default function Layout({ children }) {
             <button>
               <span>{questionCount + "/" + MAX_QUESTION}</span>
             </button>
-            <div className="flex items-center">
-              {hearts.map((_, index) => (
-                <Heart key={index} live={index < lives} />
-              ))}
+            <div className="">
+              <div className="hearts flex items-center">
+                {hearts.map((_, index) => (
+                  <Heart key={index} live={index < lives} />
+                ))}
+              </div>
+                <Timer onTimeUp={handleTimeUp} />
             </div>
             <button className="" onClick={resetGame}>
               <div className="flex gap-2">

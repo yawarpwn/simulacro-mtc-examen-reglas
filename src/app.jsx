@@ -4,13 +4,13 @@ import Results from "./components/Results"
 import ListOfOptions from "./components/ListOfOptions"
 import { MAX_QUESTION } from "./constants"
 import { useQuestion } from "./hooks/useQuestion"
+import Lives from "./components/Lives"
 
 export default function App() {
   const {
     lives,
     questionCount,
     currentQuestion,
-    resetGame,
     updateQuestion,
     checkAnswer,
     updateLives,
@@ -23,14 +23,19 @@ export default function App() {
   if (!currentQuestion) return "Loading"
 
   if (lives <= 0) {
-    return <Results  />
+    return (
+      <>
+        <h2>Se Acabaron las vidas : (</h2>
+        <Results />
+      </>
+    )
   }
 
   if (questionCount >= MAX_QUESTION) {
     return (
       <div>
         <h2>MUy Bien Lo has Logrado : )</h2>
-        <button onClick={resetGame}>Practicar otra vez</button>
+        <Results />
       </div>
     )
   }
@@ -39,7 +44,9 @@ export default function App() {
     <div className="max-w-xl mx-auto w-full flex flex-col gap-4 ">
       <article className="flex flex-col justify-center gap-4 w-full">
         <header>
-          <h2 className="text-yellow-500">{currentQuestion.pregunta.replace(/\s{3,}/g,'  ..........  ')}</h2>
+          <h2 className="text-yellow-500">
+            {currentQuestion.pregunta.replace(/\s{3,}/g, "  ..........  ")}
+          </h2>
           {currentQuestion.image === 1 && (
             <div className="mt-2 flex justify-center">
               <img
@@ -48,6 +55,7 @@ export default function App() {
             </div>
           )}
         </header>
+          <Lives />
         <ListOfOptions
           question={currentQuestion}
           checkAnswer={checkAnswer}
