@@ -1,4 +1,5 @@
 import Option from "./Option"
+import confetti from "canvas-confetti"
 import { useState } from "preact/hooks"
 
 export default function ListOfOptions({ question, checkAnswer, updateQuestion, updateError }) {
@@ -15,9 +16,11 @@ export default function ListOfOptions({ question, checkAnswer, updateQuestion, u
     if (isCorrect) {
       confetti()
       updateQuestion()
+      setUserResponse('')
     } else {
       updateError(userResponse)
       updateQuestion()
+      setUserResponse('')
     }
   }
 
@@ -35,7 +38,7 @@ export default function ListOfOptions({ question, checkAnswer, updateQuestion, u
             userResponse={userResponse}
           />
         ))}
-        <button className="h-12 mt-4">Siguiente</button>
+        <button disabled={!userResponse} className="h-12 mt-4">Siguiente</button>
       </form>
     </>
   )

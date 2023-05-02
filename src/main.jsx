@@ -1,5 +1,14 @@
-import { render } from 'preact'
-import  App  from './app.jsx'
-import './index.css'
+import { render } from "preact"
+import Layout from "./components/Layout.jsx"
+import { QuestionProvider } from "./hooks/useQuestion"
+import App from "./app.jsx"
+import "./index.css"
 
-render(<App />, document.getElementById('app'))
+render(
+  <QuestionProvider>
+    <Layout>
+      <App />
+    </Layout>
+  </QuestionProvider>,
+  document.getElementById("app")
+)

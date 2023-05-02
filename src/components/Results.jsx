@@ -1,4 +1,7 @@
-export default function Results({ resetGame, wrongQuestions }) {
+import { useQuestion } from "../hooks/useQuestion"
+
+export default function Results() {
+  const { resetGame, wrongQuestions } = useQuestion()
   return (
     <div className="flex flex-col gap-4">
       <h2 className="text-red-500 font-extrabold uppercase text-xl">
