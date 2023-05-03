@@ -1,26 +1,26 @@
-import { useState, useEffect } from "preact/hooks"
-import { TIME } from "../constants"
+import { useEffect } from "preact/hooks"
+import { useQuestions } from "../store/questionsStore"
 
-export default function Timer({ duration = TIME, onTimeUp }) {
-  const [time, setTime] = useState(duration)
+export default function Timer({ onTimeUp }) {
+  const duration = useQuestions((state) => state.duration)
+  const descrementDuration = useQuestions((state) => state.descrementDuration)
 
-  const minutes = Math.floor(time / 60)
-  const seconds = time % 60
+  const minutes = Math.floor(duration / 60)
+  const seconds = duration % 60
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setTime((time) => time - 1)
+      descrementDuration()
     }, 1000)
 
-    if (time === 0) {
+    if (duration === 0) {
       clearInterval(timer)
       onTimeUp()
       return
     }
 
     return () => clearInterval(timer)
-  }, [time])
-
+  }, [duration])
 
   return (
     <div className="text-red-500 font-bold text-lg">

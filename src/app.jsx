@@ -3,18 +3,31 @@ import "./app.css"
 import Results from "./components/Results"
 import ListOfOptions from "./components/ListOfOptions"
 import { MAX_QUESTION } from "./constants"
-import { useQuestion } from "./hooks/useQuestion"
-import Lives from "./components/Lives"
+import { useQuestions } from "./store/questionsStore"
+import { shallow } from "zustand/shallow"
+import { getQuestions } from "./services/getQuestions"
 
 export default function App() {
-  const {
-    lives,
-    questionCount,
-    currentQuestion,
-    updateQuestion,
-    checkAnswer,
-    updateLives,
-  } = useQuestion()
+  const { currentQuestion, lives, duration, updateCurrentQuestion, questionCount } =
+    useQuestions(
+      (state) => ({
+        currentQuestion: state.currentQuestion,
+        lives: state.lives,
+        descrementLives: state.descrementLives,
+        updateCurrentQuestion: state.updateCurrentQuestion,
+        questionCount: state.questionCount,
+      duration: state.duration
+      }),
+      shallow
+    )
+
+  const updateQuestion = () => {
+    const randomIndex = Math.floor(Math.random() * 200)
+    const questions = getQuestions()
+    const randomQuestion = questions[randomIndex]
+    updateCurrentQuestion(randomQuestion)
+  }
+
 
   useEffect(() => {
     updateQuestion()
@@ -22,10 +35,11 @@ export default function App() {
 
   if (!currentQuestion) return "Loading"
 
-  if (lives <= 0) {
+
+  if (lives === 0 || duration === 0) {
     return (
       <>
-        <h2>Se Acabaron las vidas : (</h2>
+        <h2>Prueba otra vez : (</h2>
         <Results />
       </>
     )
@@ -55,12 +69,9 @@ export default function App() {
             </div>
           )}
         </header>
-          <Lives />
         <ListOfOptions
-          question={currentQuestion}
-          checkAnswer={checkAnswer}
-          updateQuestion={updateQuestion}
-          updateError={updateLives}
+          updateCurrentQuestion={updateQuestion}
+          currentQuestion={currentQuestion}
         />
       </article>
     </div>

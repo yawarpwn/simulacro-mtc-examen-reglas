@@ -1,7 +1,8 @@
-import { useQuestion } from "../hooks/useQuestion"
+import { useQuestions } from "../store/questionsStore"
 
 export default function Results() {
-  const { resetGame, wrongQuestions } = useQuestion()
+  const wrongQuestions = useQuestions(state => state.wrongQuestions)
+  console.log({wrongQuestions})
   return (
     <div className="flex flex-col gap-4">
       <h2 className="text-red-600 font-extrabold uppercase text-xl">
@@ -10,7 +11,7 @@ export default function Results() {
       <div className="flex flex-col gap-4">
         {wrongQuestions.map(
           (
-            { correctAnswer, question, incorrectAnswer, hasImage, index },
+            { correctAnswer, question,  wrongAnswer, hasImage, index },
             i
           ) => {
             return (
@@ -29,7 +30,7 @@ export default function Results() {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="bg-red-500 w-1 h-10 block"></span>
-                  <span className="ml-2">{incorrectAnswer}</span>
+                  <span className="ml-2">{wrongAnswer}</span>
                 </div>
               </div>
             )
