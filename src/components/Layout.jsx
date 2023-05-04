@@ -4,7 +4,6 @@ import ResetButton from './ResetButton'
 import QuestionCount from "./QuestionCount"
 
 export default function Layout({ children }) {
-
   return (
     <>
       <header className="fixed right-0 top-0 left-0 z-50  mx-auto bg-black/40 backdrop-blur-md ">
@@ -13,7 +12,7 @@ export default function Layout({ children }) {
             <QuestionCount />
             <div>
             <Lives />
-            <Timer />
+            <Timer  />
             </div>
             <ResetButton />
           </div>

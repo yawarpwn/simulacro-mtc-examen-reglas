@@ -8,26 +8,39 @@ import { shallow } from "zustand/shallow"
 import { getQuestions } from "./services/getQuestions"
 
 export default function App() {
-  const { currentQuestion, lives, duration, updateCurrentQuestion, questionCount } =
-    useQuestions(
-      (state) => ({
-        currentQuestion: state.currentQuestion,
-        lives: state.lives,
-        descrementLives: state.descrementLives,
-        updateCurrentQuestion: state.updateCurrentQuestion,
-        questionCount: state.questionCount,
-      duration: state.duration
-      }),
-      shallow
-    )
+  const {
+    currentQuestion,
+    endGame,
+    updateCurrentQuestion,
+    questionCount,
+    shownQuestions,
+    resetShownQuestions,
+  } = useQuestions(
+    (state) => ({
+      currentQuestion: state.currentQuestion,
+      descrementLives: state.descrementLives,
+      updateCurrentQuestion: state.updateCurrentQuestion,
+      questionCount: state.questionCount,
+      endGame: state.endGame,
+      shownQuestions: state.shownQuestions,
+      updateShownQuestions: state.updateShownQuestions,
+      resetShownQuestions: state.resetShownQuestions,
+    }),
+    shallow
+  )
 
   const updateQuestion = () => {
-    const randomIndex = Math.floor(Math.random() * 200)
     const questions = getQuestions()
-    const randomQuestion = questions[randomIndex]
+    let availableQuestions = questions.filter(
+      (question) => !shownQuestions.includes(question.index)
+    )
+    if (availableQuestions.length <= MAX_QUESTION) {
+      resetShownQuestions()
+    }
+    const randomIndex = Math.floor(Math.random() * availableQuestions.length)
+    const randomQuestion = availableQuestions[randomIndex]
     updateCurrentQuestion(randomQuestion)
   }
-
 
   useEffect(() => {
     updateQuestion()
@@ -36,7 +49,7 @@ export default function App() {
   if (!currentQuestion) return "Loading"
 
 
-  if (lives === 0 || duration === 0) {
+  if (endGame) {
     return (
       <>
         <h2>Prueba otra vez : (</h2>

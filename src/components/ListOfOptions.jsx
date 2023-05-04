@@ -7,18 +7,18 @@ export default function ListOfOptions({
   updateCurrentQuestion,
   currentQuestion,
 }) {
+  const [userResponse, setUserResponse] = useState("")
   const incrementQuestionCount = useQuestions(
     (state) => state.incrementQuestionCount
   )
-  const descrementLives = useQuestions((state) => state.descrementLives)
   const updateWrongQuestions = useQuestions(
     (state) => state.updateWrongQuestions
   )
   const updateShownQuestions = useQuestions(
     (state) => state.updateShownQuestions
   )
-
-  const [userResponse, setUserResponse] = useState("")
+  const lives = useQuestions((state) => state.lives)
+  const setLives = useQuestions((state) => state.setLives)
 
   const onInputChange = (event) => {
     setUserResponse(event.target.value)
@@ -34,7 +34,7 @@ export default function ListOfOptions({
       question: currentQuestion.pregunta,
       wrongAnswer: response,
       correctAnswer,
-      index: currentQuestion.index
+      index: currentQuestion.index,
     }
     updateWrongQuestions(wrongQuestionToUpdate)
   }
@@ -51,11 +51,12 @@ export default function ListOfOptions({
       setUserResponse("")
       updateCurrentQuestion()
       incrementQuestionCount()
-      descrementLives()
+      setLives(lives - 1)
       handleWrongQuestions(userResponse)
     }
-    updateShownQuestions(currentQuestion)
+    updateShownQuestions(currentQuestion.index)
   }
+
 
   const { alternativas } = currentQuestion
 

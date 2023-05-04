@@ -1,32 +1,29 @@
-import { useEffect } from "preact/hooks"
+import { useEffect} from "preact/hooks"
 import { useQuestions } from "../store/questionsStore"
+import { shallow } from "zustand/shallow"
 
-export default function Timer({ onTimeUp }) {
-  const duration = useQuestions((state) => state.duration)
-  const descrementDuration = useQuestions((state) => state.descrementDuration)
-
-  const minutes = Math.floor(duration / 60)
-  const seconds = duration % 60
+export default function Timer() {
+  const finishGame = useQuestions(state => state.finishGame)
+  const lives = useQuestions(state => state.lives)
+  const [remainingTime, setRemainingTime] = useQuestions(state => [state.remainingTime,  state.setRemainingTime], shallow)
 
   useEffect(() => {
     const timer = setInterval(() => {
-      descrementDuration()
+      if(remainingTime === 0 || lives === 0) {
+        clearInterval(timer)
+        finishGame()
+        return
+      }
+      setRemainingTime(remainingTime - 1)
     }, 1000)
 
-    if (duration === 0) {
-      clearInterval(timer)
-      onTimeUp()
-      return
-    }
-
     return () => clearInterval(timer)
-  }, [duration])
+  }, [remainingTime])
 
-  return (
-    <div className="text-red-500 font-bold text-lg">
-      {`${minutes.toString().padStart(2, "0")} : ${seconds
-        .toString()
-        .padStart(2, "0")}`}
-    </div>
-  )
+  const minutes = Math.floor(remainingTime / 60)
+  const seconds = remainingTime % 60
+
+  const formatTime = `${minutes.toString().padStart(2, '0')}: ${seconds.toString().padStart(2, '0')}` 
+
+  return <div className="text-red-500 font-bold" onClick={finishGame}>{formatTime}</div>
 }

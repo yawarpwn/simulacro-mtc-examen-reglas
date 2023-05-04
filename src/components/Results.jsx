@@ -2,9 +2,8 @@ import { useQuestions } from "../store/questionsStore"
 
 export default function Results() {
   const wrongQuestions = useQuestions(state => state.wrongQuestions)
-  console.log({wrongQuestions})
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex max-w-xl w-full  flex-col gap-4">
       <h2 className="text-red-600 font-extrabold uppercase text-xl">
         Revisa tus errores
       </h2>
