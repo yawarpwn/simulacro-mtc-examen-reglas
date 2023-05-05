@@ -1,4 +1,5 @@
 import { useQuestions } from "../store/questionsStore"
+import { BASE_IMAGE_URL } from "../constants"
 
 export default function Results() {
   const wrongQuestions = useQuestions(state => state.wrongQuestions)
@@ -19,7 +20,7 @@ export default function Results() {
                 {hasImage && (
                   <div className="flex justify-center mb-4">
                     <img
-                      src={`https://sierdgtt.mtc.gob.pe/Content/img-data/img${index}.jpg`}
+                      src={`${BASE_IMAGE_URL}${index}.jpg`}
                     />
                   </div>
                 )}

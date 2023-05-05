@@ -2,7 +2,7 @@ import { useEffect } from "preact/hooks"
 import "./app.css"
 import Results from "./components/Results"
 import ListOfOptions from "./components/ListOfOptions"
-import { MAX_QUESTION } from "./constants"
+import { MAX_QUESTION, BASE_IMAGE_URL } from "./constants"
 import { useQuestions } from "./store/questionsStore"
 import { shallow } from "zustand/shallow"
 import { getQuestions } from "./services/getQuestions"
@@ -29,11 +29,13 @@ export default function App() {
     shallow
   )
 
+  //push question
   const updateQuestion = () => {
     const questions = getQuestions()
     let availableQuestions = questions.filter(
       (question) => !shownQuestions.includes(question.index)
     )
+
     if (availableQuestions.length <= MAX_QUESTION) {
       resetShownQuestions()
     }
@@ -77,7 +79,7 @@ export default function App() {
           {currentQuestion.image === 1 && (
             <div className="mt-2 flex justify-center">
               <img
-                src={`https://sierdgtt.mtc.gob.pe/Content/img-data/img${currentQuestion.index}.jpg`}
+                src={`${BASE_IMAGE_URL}${currentQuestion.index}.jpg`}
               />
             </div>
           )}
